@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Search, SearchX } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { featuredMovies } from '@/data/movies';
@@ -90,13 +90,16 @@ const HeroSection = () => {
         </form>
       </div>
       
-      {/* Search Results Modal */}
+      {/* Search Results Inline */}
       {showResults && (
-        <SearchResults 
-          movies={searchResults} 
-          query={searchQuery}
-          onClose={closeResults}
-        />
+        <div className="container mx-auto px-4 mt-8">
+          <SearchResults 
+            movies={searchResults} 
+            query={searchQuery}
+            onClose={closeResults}
+            inline={true}
+          />
+        </div>
       )}
     </section>
   );

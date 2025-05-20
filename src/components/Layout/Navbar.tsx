@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, SearchX } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { categories, featuredMovies } from "@/data/movies";
@@ -70,7 +70,7 @@ const Navbar = () => {
                   onClick={() => setIsSearchOpen(false)}
                   className="text-movie-text hover:bg-movie-primary hover:text-white"
                 >
-                  Cancel
+                  <X className="h-5 w-5" />
                 </Button>
               </form>
             ) : (
@@ -100,16 +100,19 @@ const Navbar = () => {
             ))}
           </div>
         </div>
+        
+        {/* Inline Search Results */}
+        {showResults && (
+          <div className="mt-4">
+            <SearchResults 
+              movies={searchResults} 
+              query={searchQuery}
+              onClose={closeResults}
+              inline={true}
+            />
+          </div>
+        )}
       </div>
-      
-      {/* Search Results Modal */}
-      {showResults && (
-        <SearchResults 
-          movies={searchResults} 
-          query={searchQuery}
-          onClose={closeResults}
-        />
-      )}
     </nav>
   );
 };
