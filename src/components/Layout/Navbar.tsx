@@ -1,13 +1,39 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search } from "lucide-react";
+import { Search, SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { categories } from "@/data/movies";
+import { categories, featuredMovies } from "@/data/movies";
+import SearchResults from "../SearchResults";
 
 const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showResults, setShowResults] = useState(false);
+  const [searchResults, setSearchResults] = useState(featuredMovies);
+  
+  const handleSearch = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    
+    if (searchQuery.trim()) {
+      console.log('Searching for:', searchQuery);
+      
+      // Filter movies based on search query
+      const results = featuredMovies.filter(movie => 
+        movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      
+      setSearchResults(results);
+      setShowResults(true);
+      setIsSearchOpen(false);
+    }
+  };
+
+  const closeResults = () => {
+    setShowResults(false);
+    setSearchQuery('');
+  };
   
   return (
     <nav className="bg-movie-secondary py-4 sticky top-0 z-10">
@@ -23,11 +49,21 @@ const Navbar = () => {
           {/* Search and Navigation */}
           <div className="flex items-center gap-4 mt-2 md:mt-0">
             {isSearchOpen ? (
-              <div className="flex gap-2">
+              <form onSubmit={handleSearch} className="flex gap-2">
                 <Input 
                   placeholder="Search movies..." 
                   className="bg-movie-card text-movie-text border-movie-primary" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  autoFocus
                 />
+                <Button 
+                  type="submit"
+                  size="sm" 
+                  className="bg-movie-primary text-white hover:bg-blue-600"
+                >
+                  Search
+                </Button>
                 <Button 
                   size="sm" 
                   variant="ghost" 
@@ -36,7 +72,7 @@ const Navbar = () => {
                 >
                   Cancel
                 </Button>
-              </div>
+              </form>
             ) : (
               <Button 
                 variant="ghost" 
@@ -65,6 +101,15 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+      
+      {/* Search Results Modal */}
+      {showResults && (
+        <SearchResults 
+          movies={searchResults} 
+          query={searchQuery}
+          onClose={closeResults}
+        />
+      )}
     </nav>
   );
 };

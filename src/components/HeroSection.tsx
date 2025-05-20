@@ -1,18 +1,51 @@
 
 import { useState } from 'react';
-import { Search } from 'lucide-react';
+import { Search, SearchX } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { featuredMovies } from '@/data/movies';
+import SearchResults from './SearchResults';
+import { toast } from "@/hooks/use-toast";
 
 const HeroSection = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [showResults, setShowResults] = useState(false);
+  const [searchResults, setSearchResults] = useState(featuredMovies);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       console.log('Searching for:', searchQuery);
-      // Here you would implement actual search functionality
+      
+      // Filter movies based on search query
+      const results = featuredMovies.filter(movie => 
+        movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      
+      setSearchResults(results);
+      setShowResults(true);
+      
+      // Show toast notification with search results
+      if (results.length > 0) {
+        toast({
+          title: `Found ${results.length} result${results.length === 1 ? '' : 's'}`,
+          description: `for "${searchQuery}"`,
+          duration: 3000,
+        });
+      } else {
+        toast({
+          title: "No results found",
+          description: `No movies matching "${searchQuery}"`,
+          duration: 3000,
+          variant: "destructive",
+        });
+      }
     }
+  };
+
+  const closeResults = () => {
+    setShowResults(false);
+    setSearchQuery('');
   };
 
   return (
@@ -56,6 +89,15 @@ const HeroSection = () => {
           </Button>
         </form>
       </div>
+      
+      {/* Search Results Modal */}
+      {showResults && (
+        <SearchResults 
+          movies={searchResults} 
+          query={searchQuery}
+          onClose={closeResults}
+        />
+      )}
     </section>
   );
 };
