@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -12,8 +12,8 @@ const HeroSection = () => {
   const [showResults, setShowResults] = useState(false);
   const [searchResults, setSearchResults] = useState(featuredMovies);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Real-time search as user types
+  useEffect(() => {
     if (searchQuery.trim()) {
       console.log('Searching for:', searchQuery);
       
@@ -24,11 +24,20 @@ const HeroSection = () => {
       
       setSearchResults(results);
       setShowResults(true);
-      
+    } else {
+      // Hide results when search query is empty
+      setShowResults(false);
+    }
+  }, [searchQuery]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Form submission is now optional since search happens as you type
+    if (searchQuery.trim()) {
       // Show toast notification with search results
-      if (results.length > 0) {
+      if (searchResults.length > 0) {
         toast({
-          title: `Found ${results.length} result${results.length === 1 ? '' : 's'}`,
+          title: `Found ${searchResults.length} result${searchResults.length === 1 ? '' : 's'}`,
           description: `for "${searchQuery}"`,
           duration: 3000,
         });
@@ -91,7 +100,7 @@ const HeroSection = () => {
       </div>
       
       {/* Search Results Inline */}
-      {showResults && (
+      {showResults && searchQuery.trim() && (
         <div className="container mx-auto px-4 mt-8">
           <SearchResults 
             movies={searchResults} 

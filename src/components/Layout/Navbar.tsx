@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,9 +13,8 @@ const Navbar = () => {
   const [showResults, setShowResults] = useState(false);
   const [searchResults, setSearchResults] = useState(featuredMovies);
   
-  const handleSearch = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    
+  // Real-time search as user types
+  useEffect(() => {
     if (searchQuery.trim()) {
       console.log('Searching for:', searchQuery);
       
@@ -26,8 +25,15 @@ const Navbar = () => {
       
       setSearchResults(results);
       setShowResults(true);
-      setIsSearchOpen(false);
+    } else {
+      // Hide results when search query is empty
+      setShowResults(false);
     }
+  }, [searchQuery]);
+
+  const handleSearch = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    // Form submission is now optional since search happens as you type
   };
 
   const closeResults = () => {
@@ -57,13 +63,6 @@ const Navbar = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   autoFocus
                 />
-                <Button 
-                  type="submit"
-                  size="sm" 
-                  className="bg-movie-primary text-white hover:bg-blue-600"
-                >
-                  Search
-                </Button>
                 <Button 
                   size="sm" 
                   variant="ghost" 
@@ -102,7 +101,7 @@ const Navbar = () => {
         </div>
         
         {/* Inline Search Results */}
-        {showResults && (
+        {showResults && searchQuery.trim() && (
           <div className="mt-4">
             <SearchResults 
               movies={searchResults} 
