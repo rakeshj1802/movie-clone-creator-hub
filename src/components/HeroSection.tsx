@@ -17,7 +17,7 @@ const HeroSection = () => {
     if (searchQuery.trim()) {
       console.log('Searching for:', searchQuery);
       
-      // Filter movies based on search query
+      // Filter movies based on search query - case insensitive
       const results = featuredMovies.filter(movie => 
         movie.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
